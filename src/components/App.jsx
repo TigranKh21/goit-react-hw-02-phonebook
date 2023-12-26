@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { ContactForm } from './Contacts/ContactForm.jsx';
 import { ContactList } from './Contacts/ContactList.jsx';
+import { Filter } from './Contacts/Filter.jsx';
 import { nanoid } from 'nanoid';
 
 export class App extends Component {
@@ -13,6 +14,7 @@ export class App extends Component {
     ],
     name: '',
     number: '',
+    filter: '',
   };
 
   handleAddContact = formData => {
@@ -31,7 +33,6 @@ export class App extends Component {
         contacts: [...prevState.contacts, newContact],
       };
     });
-    console.log('newContact: ', newContact);
   };
 
   handleDeleteContact = id => {
@@ -40,14 +41,26 @@ export class App extends Component {
     });
   };
 
+  handleFindChange = e => {
+    const value = e.target.value;
+    this.setState({ filter: value });
+  };
+
   render() {
+    const filteredContactList = this.state.contacts.filter(
+      contact =>
+        contact.name.toLowerCase().includes(this.state.filter) ||
+        contact.name.toUpperCase().includes(this.state.filter) ||
+        contact.name.includes(this.state.filter)
+    );
     return (
       <div>
         <h2>Phonebook</h2>
         <ContactForm handleAddContact={this.handleAddContact} />
         <h2>Contacts</h2>
+        <Filter state={this.state} handleFindChange={this.handleFindChange} />
         <ContactList
-          state={this.state}
+          state={filteredContactList}
           handleDeleteContact={this.handleDeleteContact}
         />
       </div>
